@@ -90,11 +90,21 @@
   .status{
     margin-top: 12px;
     font-weight: bold;
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    flex-wrap: wrap;
   }
 
   .muted{
     font-weight: normal;
     color: #555;
+  }
+
+  .timer{
+    font-variant-numeric: tabular-nums;
+    font-weight: bold;
+    color: #222;
   }
 
   .note{
@@ -151,8 +161,9 @@
       <button id="resetBtn" class="secondary" disabled>Reset</button>
     </div>
 
-    <div class="status" id="status">
-      Status: <span class="muted" id="statusText">Ready</span>
+    <div class="status">
+      <div>Status: <span class="muted" id="statusText">Ready</span></div>
+      <div>Time: <span class="timer" id="timer">00:00</span></div>
     </div>
 
     <audio id="playback" controls></audio>
@@ -172,6 +183,7 @@
   const submitBtn = document.getElementById("submitBtn");
   const resetBtn = document.getElementById("resetBtn");
   const statusText = document.getElementById("statusText");
+  const timerEl = document.getElementById("timer");
   const playback = document.getElementById("playback");
 
   const nameEl = document.getElementById("name");
@@ -186,8 +198,38 @@
   let audioUrl = null;
   let isSubmitting = false;
 
+  let timerInterval = null;
+  let startTimeMs = 0;
+
   function setStatus(text){
     statusText.textContent = text;
+  }
+
+  function formatTime(totalSeconds){
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  function startTimer(){
+    startTimeMs = Date.now();
+    timerEl.textContent = "00:00";
+    timerInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTimeMs) / 1000);
+      timerEl.textContent = formatTime(elapsed);
+    }, 250);
+  }
+
+  function stopTimer(){
+    if (timerInterval){
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function resetTimer(){
+    stopTimer();
+    timerEl.textContent = "00:00";
   }
 
   function cleanupUrl(){
@@ -195,29 +237,6 @@
       URL.revokeObjectURL(audioUrl);
       audioUrl = null;
     }
-  }
-
-  function resetAll(){
-    if (isSubmitting) return;
-
-    try{
-      if (mediaRecorder && mediaRecorder.state !== "inactive"){
-        mediaRecorder.stop();
-      }
-    }catch(e){}
-
-    mediaRecorder = null;
-    chunks = [];
-    audioBlob = null;
-    cleanupUrl();
-    playback.src = "";
-
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-    submitBtn.disabled = true;
-    resetBtn.disabled = true;
-
-    setStatus("Ready");
   }
 
   function safeText(v){
@@ -249,6 +268,30 @@
     });
   }
 
+  function resetAll(){
+    if (isSubmitting) return;
+
+    try{
+      if (mediaRecorder && mediaRecorder.state !== "inactive"){
+        mediaRecorder.stop();
+      }
+    }catch(e){}
+
+    mediaRecorder = null;
+    chunks = [];
+    audioBlob = null;
+    cleanupUrl();
+    playback.src = "";
+
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    submitBtn.disabled = true;
+    resetBtn.disabled = true;
+
+    setStatus("Ready");
+    resetTimer();
+  }
+
   startBtn.addEventListener("click", async () => {
     try{
       resetAll();
@@ -266,12 +309,15 @@
       audioBlob = null;
 
       mediaRecorder = new MediaRecorder(stream);
+
       mediaRecorder.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) chunks.push(e.data);
       };
 
       mediaRecorder.onstop = () => {
+        stopTimer();
         audioBlob = new Blob(chunks, { type: "audio/webm" });
+
         cleanupUrl();
         audioUrl = URL.createObjectURL(audioBlob);
         playback.src = audioUrl;
@@ -293,6 +339,8 @@
       resetBtn.disabled = false;
 
       setStatus("Recording");
+      resetTimer();
+      startTimer();
     }catch(err){
       alert("Microphone access failed. Allow mic permissions and try again.");
       resetAll();
@@ -311,6 +359,7 @@
 
     try{
       isSubmitting = true;
+
       startBtn.disabled = true;
       stopBtn.disabled = true;
       submitBtn.disabled = true;
