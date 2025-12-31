@@ -3,98 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>High School Stories Recorder</title>
+  <title>Class of 88 Story Recorder</title>
+
   <style>
-    :root {
-      --card-bg: rgba(255, 255, 255, 0.92);
+    :root{
+      --bg: #efe7da;
+      --card: rgba(255,255,255,0.92);
+      --border: rgba(0,0,0,0.14);
       --text: #111;
       --muted: #555;
-      --border: rgba(0, 0, 0, 0.12);
       --btn: #111;
       --btnText: #fff;
       --btn2: #f2f2f2;
       --btn2Text: #111;
-      --danger: #b00020;
+      --bad: #b00020;
       --ok: #0b6b2a;
     }
 
-    html, body {
+    html, body{
       height: 100%;
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
     }
 
-    body {
-      background-color: #efe7da;
-      background-image:
-        linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
-        url("nodulek.jpg");
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      padding: 28px 14px;
+    body{
+      background: var(--bg);
+      padding: 26px 14px;
     }
 
-    .wrap {
-      max-width: 860px;
+    .wrap{
+      max-width: 900px;
       margin: 0 auto;
     }
 
-    h1 {
+    h1{
       margin: 0 0 10px 0;
-      font-size: 30px;
-      color: #fff;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+      font-size: 28px;
     }
 
-    .hint {
+    .hint{
       background: rgba(255, 245, 225, 0.95);
-      border: 1px solid rgba(0,0,0,0.12);
-      border-radius: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
       padding: 12px 14px;
-      margin: 0 0 14px 0;
-      line-height: 1.35;
+      line-height: 1.4;
+      margin-bottom: 14px;
     }
 
-    .card {
-      background: var(--card-bg);
+    .card{
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 16px;
-      box-shadow: 0 8px 26px rgba(0,0,0,0.18);
     }
 
-    label {
+    label{
       display: block;
       font-weight: 700;
-      margin: 10px 0 6px;
+      margin: 12px 0 6px;
     }
 
-    input, textarea {
+    input, textarea{
       width: 100%;
       box-sizing: border-box;
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 12px 12px;
+      padding: 11px 12px;
       font-size: 16px;
-      outline: none;
       background: #fff;
+      outline: none;
     }
 
-    textarea {
+    textarea{
       min-height: 90px;
       resize: vertical;
     }
 
-    .row {
+    .row{
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      margin-top: 14px;
     }
 
-    button {
+    button{
       border: 0;
       border-radius: 10px;
       padding: 12px 14px;
@@ -102,64 +95,69 @@
       cursor: pointer;
     }
 
-    button.primary {
+    button.primary{
       background: var(--btn);
       color: var(--btnText);
     }
 
-    button.secondary {
+    button.secondary{
       background: var(--btn2);
       color: var(--btn2Text);
       border: 1px solid var(--border);
     }
 
-    button:disabled {
-      opacity: 0.5;
+    button:disabled{
+      opacity: 0.55;
       cursor: not-allowed;
     }
 
-    .status {
+    .status{
       margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 10px;
       border: 1px solid var(--border);
-      background: rgba(255,255,255,0.8);
-      line-height: 1.35;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.85);
+      line-height: 1.4;
     }
 
-    .muted { color: var(--muted); }
+    .muted{ color: var(--muted); }
+    .ok{ color: var(--ok); font-weight: 700; }
+    .bad{ color: var(--bad); font-weight: 700; }
 
-    .ok { color: var(--ok); font-weight: 700; }
-    .bad { color: var(--danger); font-weight: 700; }
-
-    .meter {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(0,0,0,0.12);
+    .meter{
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0,0,0,0.10);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: baseline;
     }
 
-    .small {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 10px;
-      line-height: 1.35;
-    }
-
-    audio {
+    audio{
       width: 100%;
       margin-top: 12px;
     }
+
+    .small{
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
-    <h1>High School Stories Recorder</h1>
+    <h1>Class of 88 Story Recorder</h1>
 
     <div class="hint">
-      Instructions. Enter your name, and a short subject, then press Start Recording. When finished, press Stop, then press Submit.
+      Instructions. Fill in your name and a short subject, then press Start Recording. When finished, press Stop, then Submit.
       <br><br>
-      Recording time. For best results, keep recordings under 10 minutes. Use Chrome or Edge if possible. On iPhone Safari, recording can be unreliable.
-      Keep your screen awake while recording.
+      Recording length. For best results, keep it to 2 to 5 minutes. If you have more, submit another recording. This page will stop recording at 10 minutes to avoid browser issues.
+      <br><br>
+      Browser note. Chrome or Edge works best.
     </div>
 
     <div class="card">
@@ -176,7 +174,7 @@
       <input id="phone" type="tel" placeholder="Example: 3205551234" autocomplete="tel" />
 
       <label for="subject">Story subject (required)</label>
-      <input id="subject" type="text" placeholder="Example: The bonfire night, The big game, The class trip" />
+      <input id="subject" type="text" placeholder="Example: The big game, The class trip, The bonfire night" />
 
       <label for="details">Brief description (optional)</label>
       <textarea id="details" placeholder="One or two sentences about what the story is about."></textarea>
@@ -188,10 +186,11 @@
         <button id="resetBtn" class="secondary">Reset</button>
       </div>
 
-      <div class="status" id="status">
-        Status: <span class="muted" id="statusText">Ready</span>
+      <div class="status">
+        Status: <span id="statusText" class="muted">Ready</span>
         <div class="meter">
-          Time: <span id="timeText">00:00</span>
+          <div>Time: <span id="timeText">00:00</span></div>
+          <div id="netText" class="muted"></div>
         </div>
       </div>
 
@@ -205,6 +204,7 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyo5vUFD3HrCqeW9N20keNf0C3468GRL20nrGEM_3hJWAvv-1whGIwGhdCXjmQ-TsWy/exec";
+    const MAX_SECONDS = 600;
 
     const el = (id) => document.getElementById(id);
 
@@ -222,6 +222,7 @@
 
     const statusText = el("statusText");
     const timeText = el("timeText");
+    const netText = el("netText");
     const player = el("player");
 
     let mediaStream = null;
@@ -229,84 +230,117 @@
     let chunks = [];
     let recordedBlob = null;
 
-    let timerInterval = null;
+    let timerHandle = null;
     let startTimeMs = 0;
 
-    function setStatus(text, kind) {
-      statusText.className = kind || "muted";
+    function setStatus(text, cls){
+      statusText.className = cls || "muted";
       statusText.textContent = text;
     }
 
-    function formatTime(totalSeconds) {
-      const mm = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
-      const ss = String(totalSeconds % 60).padStart(2, "0");
+    function setNet(text){
+      netText.textContent = text || "";
+    }
+
+    function formatTime(seconds){
+      const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const ss = String(seconds % 60).padStart(2, "0");
       return mm + ":" + ss;
     }
 
-    function startTimer() {
-      stopTimer();
-      startTimeMs = Date.now();
-      timeText.textContent = "00:00";
-      timerInterval = setInterval(() => {
-        const seconds = Math.floor((Date.now() - startTimeMs) / 1000);
-        timeText.textContent = formatTime(seconds);
-      }, 250);
-    }
-
-    function stopTimer() {
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
+    function stopTimer(){
+      if (timerHandle){
+        clearInterval(timerHandle);
+        timerHandle = null;
       }
     }
 
-    function hasMediaRecorderSupport() {
+    function startTimer(){
+      stopTimer();
+      startTimeMs = Date.now();
+      timeText.textContent = "00:00";
+
+      timerHandle = setInterval(() => {
+        const sec = Math.floor((Date.now() - startTimeMs) / 1000);
+        timeText.textContent = formatTime(sec);
+
+        if (sec >= MAX_SECONDS){
+          setStatus("Stopped at 10 minutes", "bad");
+          if (recorder && recorder.state === "recording"){
+            try { recorder.stop(); } catch (e) {}
+          }
+        }
+      }, 250);
+    }
+
+    function hasSupport(){
       return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
     }
 
-    function pickMimeType() {
-      const candidates = [
+    function pickMimeType(){
+      const types = [
         "audio/webm;codecs=opus",
         "audio/webm",
         "audio/ogg;codecs=opus",
         "audio/ogg"
       ];
-      for (const t of candidates) {
-        if (MediaRecorder.isTypeSupported(t)) return t;
+      for (const t of types){
+        try{
+          if (MediaRecorder.isTypeSupported(t)) return t;
+        }catch(e){}
       }
       return "";
     }
 
-    async function startRecording() {
+    function sanitizeForFilename(s){
+      return String(s || "")
+        .trim()
+        .replace(/[^\w\s\-]/g, "")
+        .replace(/\s+/g, "_")
+        .slice(0, 50);
+    }
+
+    function blobToBase64(blob){
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onerror = () => reject(new Error("Failed to read audio data"));
+        r.onload = () => {
+          const txt = String(r.result || "");
+          const i = txt.indexOf(",");
+          if (i === -1) return reject(new Error("Invalid base64 data"));
+          resolve(txt.slice(i + 1));
+        };
+        r.readAsDataURL(blob);
+      });
+    }
+
+    async function startRecording(){
       recordedBlob = null;
       player.src = "";
       chunks = [];
+      setNet("");
 
-      if (!hasMediaRecorderSupport()) {
-        setStatus("This browser cannot record audio here. Use Chrome or Edge.", "bad");
+      if (!hasSupport()){
+        setStatus("This browser cannot record audio. Use Chrome or Edge.", "bad");
         return;
       }
 
-      const subject = subjectEl.value.trim();
-      if (!subject) {
-        setStatus("Please enter a story subject first.", "bad");
+      const subj = subjectEl.value.trim();
+      if (!subj){
+        setStatus("Enter a story subject first.", "bad");
         subjectEl.focus();
         return;
       }
 
-      try {
-        setStatus("Requesting microphone permission.", "muted");
+      try{
+        setStatus("Requesting microphone permission", "muted");
 
         mediaStream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true
-          }
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
         });
 
-        const mimeType = pickMimeType();
-        recorder = mimeType ? new MediaRecorder(mediaStream, { mimeType }) : new MediaRecorder(mediaStream);
+        const mime = pickMimeType();
+        recorder = mime ? new MediaRecorder(mediaStream, { mimeType: mime }) : new MediaRecorder(mediaStream);
 
         recorder.ondataavailable = (e) => {
           if (e.data && e.data.size > 0) chunks.push(e.data);
@@ -316,7 +350,7 @@
           startBtn.disabled = true;
           stopBtn.disabled = false;
           submitBtn.disabled = true;
-          setStatus("Recording.", "ok");
+          setStatus("Recording", "ok");
           startTimer();
         };
 
@@ -326,15 +360,17 @@
           startBtn.disabled = false;
 
           recordedBlob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
-          const url = URL.createObjectURL(recordedBlob);
-          player.src = url;
+          player.src = URL.createObjectURL(recordedBlob);
 
           submitBtn.disabled = false;
-          const seconds = Math.floor((Date.now() - startTimeMs) / 1000);
-          timeText.textContent = formatTime(seconds);
-          setStatus("Recording ready to submit.", "ok");
+          const sec = Math.floor((Date.now() - startTimeMs) / 1000);
+          timeText.textContent = formatTime(sec);
 
-          if (mediaStream) {
+          if (statusText.textContent === "Recording"){
+            setStatus("Recording ready to submit", "ok");
+          }
+
+          if (mediaStream){
             mediaStream.getTracks().forEach(t => t.stop());
             mediaStream = null;
           }
@@ -342,69 +378,58 @@
 
         recorder.onerror = (err) => {
           stopTimer();
-          setStatus("Recorder error: " + (err && err.message ? err.message : String(err)), "bad");
+          setStatus("Recorder error. Refresh and try again.", "bad");
           startBtn.disabled = false;
           stopBtn.disabled = true;
           submitBtn.disabled = true;
         };
 
         recorder.start(250);
-      } catch (err) {
-        setStatus("Microphone permission blocked. Please allow mic access, then try again.", "bad");
+      } catch (err){
+        setStatus("Microphone blocked. Allow mic access and try again.", "bad");
         startBtn.disabled = false;
         stopBtn.disabled = true;
         submitBtn.disabled = true;
       }
     }
 
-    function stopRecording() {
-      if (!recorder) return;
-      try {
-        recorder.stop();
-      } catch (e) {
-        setStatus("Could not stop recorder. Refresh and try again.", "bad");
+    function stopRecording(){
+      if (recorder && recorder.state === "recording"){
+        try{
+          setStatus("Stopping", "muted");
+          recorder.stop();
+        }catch(e){
+          setStatus("Could not stop recorder. Refresh and try again.", "bad");
+        }
       }
     }
 
-    function blobToBase64(blob) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const dataUrl = reader.result || "";
-          const base64 = String(dataUrl).split(",")[1] || "";
-          resolve(base64);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    }
-
-    async function submitRecording() {
-      if (!recordedBlob) {
+    async function submitRecording(){
+      if (!recordedBlob){
         setStatus("No recording to submit. Record first.", "bad");
         return;
       }
 
-      const subject = subjectEl.value.trim();
-      if (!subject) {
-        setStatus("Please enter a story subject first.", "bad");
+      const subj = subjectEl.value.trim();
+      if (!subj){
+        setStatus("Enter a story subject first.", "bad");
         subjectEl.focus();
         return;
       }
 
-      submitBtn.disabled = true;
       startBtn.disabled = true;
       stopBtn.disabled = true;
+      submitBtn.disabled = true;
 
-      try {
-        setStatus("Preparing upload.", "muted");
+      try{
+        setStatus("Preparing upload", "muted");
 
         const base64 = await blobToBase64(recordedBlob);
 
-        const safeName = (nameEl.value.trim() || "Unknown").replace(/[^\w\s\-]/g, "").trim();
-        const safeSubject = subject.replace(/[^\w\s\-]/g, "").trim();
-        const timestamp = new Date().toISOString().replace(/[:.]/g, "");
-        const filename = `ClassOf88_${safeName}_${safeSubject}_${timestamp}.webm`.replace(/\s+/g, "_");
+        const safeName = sanitizeForFilename(nameEl.value || "Unknown");
+        const safeSubject = sanitizeForFilename(subj);
+        const ts = new Date().toISOString().replace(/[:.]/g, "").slice(0, 15);
+        const filename = `ClassOf88_${safeSubject}_${safeName}_${ts}.webm`;
 
         const payload = {
           filename: filename,
@@ -414,11 +439,12 @@
           year: yearEl.value.trim(),
           email: emailEl.value.trim(),
           phone: phoneEl.value.trim(),
-          subject: subjectEl.value.trim(),
+          subject: subj,
           details: detailsEl.value.trim()
         };
 
-        setStatus("Uploading.", "muted");
+        setStatus("Uploading", "muted");
+        setNet("Sending to server");
 
         const res = await fetch(SCRIPT_URL, {
           method: "POST",
@@ -426,21 +452,33 @@
           body: JSON.stringify(payload)
         });
 
-        const text = await res.text();
+        const raw = await res.text();
         let json = null;
-        try { json = JSON.parse(text); } catch (e) {}
+        try { json = JSON.parse(raw); } catch(e) {}
 
-        if (!res.ok) {
-          throw new Error("Upload failed. HTTP " + res.status + ". " + text);
+        if (!res.ok){
+          throw new Error("HTTP " + res.status + ". " + raw);
         }
 
-        if (json && json.ok === false) {
-          throw new Error("Upload failed. " + (json.error || "Unknown error"));
+        if (json && json.ok === false){
+          throw new Error(json.error || "Server returned ok false");
         }
 
-        setStatus("Submitted successfully. Thank you.", "ok");
-      } catch (err) {
+        setStatus("Submitted successfully", "ok");
+
+        if (json && typeof json.emailSent === "boolean"){
+          if (json.emailSent){
+            setNet("Email notification sent");
+          } else {
+            setNet("Saved to Drive. Email failed. We will fix that.");
+          }
+        } else {
+          setNet("Saved to Drive");
+        }
+
+      } catch (err){
         setStatus("Submit error: " + (err && err.message ? err.message : String(err)), "bad");
+        setNet("");
         submitBtn.disabled = false;
       } finally {
         startBtn.disabled = false;
@@ -448,14 +486,14 @@
       }
     }
 
-    function resetAll() {
+    function resetAll(){
       stopTimer();
 
-      try {
+      try{
         if (recorder && recorder.state !== "inactive") recorder.stop();
-      } catch (e) {}
+      }catch(e){}
 
-      if (mediaStream) {
+      if (mediaStream){
         mediaStream.getTracks().forEach(t => t.stop());
         mediaStream = null;
       }
@@ -463,10 +501,11 @@
       recorder = null;
       chunks = [];
       recordedBlob = null;
-      player.src = "";
 
+      player.src = "";
       timeText.textContent = "00:00";
       setStatus("Ready", "muted");
+      setNet("");
 
       startBtn.disabled = false;
       stopBtn.disabled = true;
