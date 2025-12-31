@@ -22,7 +22,9 @@
     button.secondary { background: #fff; color: #111; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
     label { display: block; font-weight: bold; margin-top: 12px; }
-    input[type="text"] { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; }
+    input[type="text"], input[type="email"], input[type="tel"] {
+      width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc;
+    }
     .status { margin-top: 10px; font-weight: bold; }
     .muted { color: #444; font-weight: normal; }
     audio { width: 100%; margin-top: 12px; }
@@ -35,8 +37,9 @@
   <h1>High School Stories Recorder</h1>
 
   <p class="warn small">
-    Instructions. Enter your name, press Start Recording, then tell your story. When you finish, press Stop, then press Download.
+    Instructions. Enter your name and optional contact info, press Start Recording, tell your story, then press Stop and Download.
     If you want your story kept private and not used in a book, say that clearly at the start of your recording.
+    Contact info is only used if clarification is needed.
   </p>
 
   <div class="card">
@@ -45,6 +48,12 @@
 
     <label for="year">Graduation year (optional)</label>
     <input id="year" type="text" placeholder="Example: 1995" inputmode="numeric" />
+
+    <label for="email">Email address (optional)</label>
+    <input id="email" type="email" placeholder="Example: you@email.com" autocomplete="email" />
+
+    <label for="phone">Phone number (optional)</label>
+    <input id="phone" type="tel" placeholder="Example: 555-123-4567" autocomplete="tel" />
 
     <div class="row">
       <button id="startBtn">Start Recording</button>
@@ -61,8 +70,7 @@
     <audio id="playback" controls></audio>
 
     <p class="small muted">
-      Note. Use Chrome or Edge if possible. iPhone Safari can be inconsistent for long recordings.
-      If your phone sleeps, the recording can stop, keep the screen awake while recording.
+      Use Chrome or Edge if possible. Keep your screen awake while recording.
     </p>
   </div>
 
@@ -76,12 +84,13 @@
     const playback = document.getElementById("playback");
     const nameEl = document.getElementById("name");
     const yearEl = document.getElementById("year");
+    const emailEl = document.getElementById("email");
+    const phoneEl = document.getElementById("phone");
 
     let mediaRecorder = null;
     let chunks = [];
     let audioBlob = null;
     let audioUrl = null;
-
     let timerInterval = null;
     let startTimeMs = 0;
 
@@ -115,9 +124,14 @@
     function safeFilename() {
       const name = (nameEl.value || "Anonymous").trim().replace(/[^a-z0-9]+/gi, "_");
       const year = (yearEl.value || "").trim().replace(/[^0-9]+/g, "");
+      const email = (emailEl.value || "").trim().replace(/[^a-z0-9]+/gi, "_");
+      const phone = (phoneEl.value || "").trim().replace(/[^0-9]+/g, "");
       const stamp = new Date().toISOString().replace(/[:.]/g, "").slice(0, 15);
+
       const parts = ["HighSchoolStory", name];
       if (year) parts.push(year);
+      if (email) parts.push("email_" + email);
+      if (phone) parts.push("phone_" + phone);
       parts.push(stamp);
       return parts.join("_");
     }
@@ -161,7 +175,6 @@
     startBtn.addEventListener("click", async () => {
       try {
         resetAll();
-
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           alert("This browser does not support microphone recording.");
           return;
@@ -169,36 +182,25 @@
 
         const mimeType = await getSupportedMimeType();
         const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true
-          }
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
         });
 
         chunks = [];
         audioBlob = null;
 
         mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data && e.data.size > 0) chunks.push(e.data);
-        };
-
+        mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
         mediaRecorder.onstop = () => {
           stopTimer();
           setStatus("Processing recording");
-
           audioBlob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
           cleanupUrl();
           audioUrl = URL.createObjectURL(audioBlob);
           playback.src = audioUrl;
-
           downloadBtn.disabled = false;
           resetBtn.disabled = false;
           startBtn.disabled = false;
           stopBtn.disabled = true;
-
           setStatus("Ready to download");
           stream.getTracks().forEach(t => t.stop());
         };
@@ -208,19 +210,16 @@
         stopBtn.disabled = false;
         downloadBtn.disabled = true;
         resetBtn.disabled = false;
-
         setStatus("Recording");
         startTimer();
       } catch (err) {
-        console.error(err);
-        alert("Microphone access failed. Please allow microphone permissions and try again.");
+        alert("Microphone access failed. Allow mic permissions and try again.");
         resetAll();
       }
     });
 
     stopBtn.addEventListener("click", () => {
-      if (!mediaRecorder) return;
-      if (mediaRecorder.state === "recording") {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
         setStatus("Stopping");
         mediaRecorder.stop();
       }
@@ -228,10 +227,8 @@
 
     downloadBtn.addEventListener("click", () => {
       if (!audioBlob) return;
-
       const ext = (audioBlob.type && audioBlob.type.includes("ogg")) ? "ogg" : "webm";
       const filename = safeFilename() + "." + ext;
-
       const a = document.createElement("a");
       a.href = audioUrl;
       a.download = filename;
@@ -241,10 +238,7 @@
     });
 
     resetBtn.addEventListener("click", resetAll);
-
-    window.addEventListener("beforeunload", () => {
-      cleanupUrl();
-    });
+    window.addEventListener("beforeunload", cleanupUrl);
   </script>
 </body>
 </html>
