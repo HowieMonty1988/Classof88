@@ -1,150 +1,130 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Class of 88 Story Recorder</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Class of 88, Story Recorder</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 24px;
-      max-width: 860px;
-      background-color: #faf6f0;
-      color: #222;
-    }
+<style>
+  body{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 22px;
+    max-width: 900px;
+    background-color: #faf6f0;
+    color: #222;
+  }
 
-    h1 {
-      font-size: 26px;
-      margin-bottom: 8px;
-    }
+  .wrap{
+    max-width: 820px;
+    margin: 0 auto;
+  }
 
-    h2 {
-      font-size: 18px;
-      margin-top: 28px;
-    }
+  h1{
+    margin: 0 0 10px;
+    font-size: 26px;
+  }
 
-    p {
-      line-height: 1.6;
-    }
+  .intro{
+    background: #ffffff;
+    border: 1px solid #e2d9cc;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
 
-    .intro {
-      background: #ffffff;
-      border: 1px solid #e2d9cc;
-      border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 20px;
-    }
+  .card{
+    background: #ffffff;
+    border: 1px solid #e2d9cc;
+    border-radius: 12px;
+    padding: 18px;
+  }
 
-    .card {
-      background: #ffffff;
-      border: 1px solid #e2d9cc;
-      border-radius: 12px;
-      padding: 18px;
-      margin-top: 14px;
-    }
+  label{
+    display: block;
+    font-weight: bold;
+    margin-top: 12px;
+  }
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 12px;
-    }
+  input, textarea{
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-top: 4px;
+    font-size: 14px;
+  }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      margin-top: 4px;
-    }
+  textarea{
+    resize: vertical;
+  }
 
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
+  .row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
 
-    button {
-      padding: 10px 16px;
-      border-radius: 10px;
-      border: 1px solid #333;
-      background: #333;
-      color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-    }
+  button{
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+  }
 
-    button.secondary {
-      background: #ffffff;
-      color: #333;
-    }
+  button.secondary{
+    background: #ffffff;
+    color: #333;
+  }
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+  button:disabled{
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
 
-    .status {
-      margin-top: 12px;
-      font-weight: bold;
-    }
+  .status{
+    margin-top: 12px;
+    font-weight: bold;
+  }
 
-    .muted {
-      font-weight: normal;
-      color: #555;
-    }
+  .muted{
+    font-weight: normal;
+    color: #555;
+  }
 
-    audio {
-      width: 100%;
-      margin-top: 14px;
-    }
+  .note{
+    font-size: 13px;
+    color: #555;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
 
-    .timer {
-      font-variant-numeric: tabular-nums;
-    }
-
-    .note {
-      font-size: 13px;
-      color: #555;
-      margin-top: 10px;
-    }
-  </style>
+  audio{
+    width: 100%;
+    margin-top: 14px;
+  }
+</style>
 </head>
 
 <body>
+<div class="wrap">
 
-  <h1>Class of 88 Story Recorder</h1>
+  <h1>Class of 88, Story Recorder</h1>
 
   <div class="intro">
     <p>
-      This page is for collecting real stories and memories from our high school years.
-      There is no writing required. Just press record and tell your story in your own words.
+      This page collects real stories and memories from our high school years. No writing required. Press Start Recording and speak naturally.
     </p>
-
     <p>
-      Your story can be funny, meaningful, serious, or simple. One memory or several moments.
-      There is no time limit.
+      Please begin your recording by saying your name and graduation year. If there is anything you do not want included in a future book, say that clearly at the start of your recording.
     </p>
-
-    <h2>How this works</h2>
-    <ol>
-      <li>Fill in your name and optional contact information.</li>
-      <li>Press <strong>Start Recording</strong>.</li>
-      <li>Tell your story at your own pace.</li>
-      <li>Press <strong>Stop</strong> when finished.</li>
-      <li>Download your recording or upload it when prompted.</li>
-    </ol>
-
-    <p>
-      If you want your story <strong>kept private</strong> and not used in a book,
-      say that clearly at the start of your recording.
-    </p>
-
-    <p>
-      Contact information is only used if clarification is needed.
+    <p class="note">
+      Tip. Chrome or Edge works best. Keep your screen awake while recording and submitting.
     </p>
   </div>
 
@@ -155,158 +135,227 @@
     <label for="year">Graduation year (optional)</label>
     <input id="year" type="text" placeholder="Example: 1988" inputmode="numeric" />
 
-    <label for="email">Email address (optional)</label>
-    <input id="email" type="email" placeholder="Example: you@email.com" autocomplete="email" />
+    <label for="email">Email (optional)</label>
+    <input id="email" type="email" placeholder="Example: name@email.com" autocomplete="email" />
 
     <label for="phone">Phone number (optional)</label>
     <input id="phone" type="tel" placeholder="Example: 555-123-4567" autocomplete="tel" />
 
-    <label for="subject">Story subject or short title</label>
-    <input id="subject" type="text" placeholder="Example: Friday night football bus ride" />
+    <label for="subject">Story subject or short description</label>
+    <textarea id="subject" rows="3" placeholder="Example: Football bus trip, first car, weekend hangouts."></textarea>
 
     <div class="row">
       <button id="startBtn">Start Recording</button>
       <button id="stopBtn" disabled>Stop</button>
-      <button id="downloadBtn" class="secondary" disabled>Download Recording</button>
+      <button id="submitBtn" class="secondary" disabled>Submit Recording</button>
       <button id="resetBtn" class="secondary" disabled>Reset</button>
     </div>
 
     <div class="status" id="status">
-      Status: <span class="muted">Ready</span>
-      &nbsp;&nbsp; Time: <span class="timer" id="timer">00:00</span>
+      Status: <span class="muted" id="statusText">Ready</span>
     </div>
 
     <audio id="playback" controls></audio>
 
     <p class="note">
-      Tip: Use Chrome or Edge if possible. Keep your screen awake while recording.
+      You do not need to download anything. Submitting sends your recording to the project Drive folder.
     </p>
   </div>
 
-  <script>
-    const startBtn = document.getElementById("startBtn");
-    const stopBtn = document.getElementById("stopBtn");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const statusEl = document.getElementById("status");
-    const timerEl = document.getElementById("timer");
-    const playback = document.getElementById("playback");
+</div>
 
-    const nameEl = document.getElementById("name");
-    const yearEl = document.getElementById("year");
-    const emailEl = document.getElementById("email");
-    const phoneEl = document.getElementById("phone");
-    const subjectEl = document.getElementById("subject");
+<script>
+  const UPLOAD_URL = "https://script.google.com/macros/s/AKfycbxsSrMHR2D97u5cnr8SPzHgjnvxbqwWryIEy2VnBw2dlyb7l6FsWzskeIaQjeaKHbHT/exec";
 
-    let mediaRecorder = null;
-    let chunks = [];
-    let audioBlob = null;
-    let audioUrl = null;
-    let timerInterval = null;
-    let startTimeMs = 0;
+  const startBtn = document.getElementById("startBtn");
+  const stopBtn = document.getElementById("stopBtn");
+  const submitBtn = document.getElementById("submitBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const statusText = document.getElementById("statusText");
+  const playback = document.getElementById("playback");
 
-    function setStatus(text) {
-      statusEl.innerHTML = `Status: <span class="muted">${text}</span>
-        &nbsp;&nbsp; Time: <span class="timer" id="timer">${timerEl.textContent}</span>`;
-      timerEl.textContent = document.getElementById("timer").textContent;
+  const nameEl = document.getElementById("name");
+  const yearEl = document.getElementById("year");
+  const emailEl = document.getElementById("email");
+  const phoneEl = document.getElementById("phone");
+  const subjectEl = document.getElementById("subject");
+
+  let mediaRecorder = null;
+  let chunks = [];
+  let audioBlob = null;
+  let audioUrl = null;
+  let isSubmitting = false;
+
+  function setStatus(text){
+    statusText.textContent = text;
+  }
+
+  function cleanupUrl(){
+    if (audioUrl){
+      URL.revokeObjectURL(audioUrl);
+      audioUrl = null;
     }
+  }
 
-    function formatTime(seconds) {
-      const m = Math.floor(seconds / 60);
-      const s = seconds % 60;
-      return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
-    }
+  function resetAll(){
+    if (isSubmitting) return;
 
-    function startTimer() {
-      startTimeMs = Date.now();
-      timerEl.textContent = "00:00";
-      timerInterval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTimeMs) / 1000);
-        timerEl.textContent = formatTime(elapsed);
-      }, 250);
-    }
-
-    function stopTimer() {
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = null;
-    }
-
-    function safeFilename() {
-      const clean = v => (v || "").trim().replace(/[^a-z0-9]+/gi, "_");
-      const parts = [
-        "ClassOf88",
-        clean(subjectEl.value || "Story"),
-        clean(nameEl.value || "Anonymous"),
-        clean(yearEl.value),
-        Date.now()
-      ];
-      return parts.filter(Boolean).join("_") + ".webm";
-    }
-
-    function resetAll() {
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        try { mediaRecorder.stop(); } catch {}
+    try{
+      if (mediaRecorder && mediaRecorder.state !== "inactive"){
+        mediaRecorder.stop();
       }
-      mediaRecorder = null;
+    }catch(e){}
+
+    mediaRecorder = null;
+    chunks = [];
+    audioBlob = null;
+    cleanupUrl();
+    playback.src = "";
+
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    submitBtn.disabled = true;
+    resetBtn.disabled = true;
+
+    setStatus("Ready");
+  }
+
+  function safeText(v){
+    return String(v || "").trim();
+  }
+
+  function makeFilename(){
+    const now = new Date().toISOString().replace(/[:.]/g, "").slice(0, 15);
+    const n = safeText(nameEl.value).replace(/[^a-z0-9]+/gi, "_").slice(0, 30) || "Anonymous";
+    const y = safeText(yearEl.value).replace(/[^0-9]+/g, "").slice(0, 4);
+    const s = safeText(subjectEl.value).replace(/[^a-z0-9]+/gi, "_").slice(0, 40) || "Story";
+    const parts = ["Classof88", s, n];
+    if (y) parts.push(y);
+    parts.push(now);
+    return parts.join("_") + ".webm";
+  }
+
+  function blobToBase64(blob){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("Failed to read audio data."));
+      reader.onload = () => {
+        const result = String(reader.result || "");
+        const comma = result.indexOf(",");
+        if (comma === -1) return reject(new Error("Invalid base64 data."));
+        resolve(result.slice(comma + 1));
+      };
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  startBtn.addEventListener("click", async () => {
+    try{
+      resetAll();
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        alert("This browser does not support microphone recording.");
+        return;
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+      });
+
       chunks = [];
       audioBlob = null;
-      if (audioUrl) URL.revokeObjectURL(audioUrl);
-      playback.src = "";
-      stopTimer();
-      timerEl.textContent = "00:00";
-      startBtn.disabled = false;
-      stopBtn.disabled = true;
-      downloadBtn.disabled = true;
-      resetBtn.disabled = true;
-      setStatus("Ready");
-    }
 
-    async function getMimeType() {
-      const types = ["audio/webm;codecs=opus", "audio/webm"];
-      return types.find(t => MediaRecorder.isTypeSupported(t)) || "";
-    }
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) chunks.push(e.data);
+      };
 
-    startBtn.onclick = async () => {
-      resetAll();
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mimeType = await getMimeType();
-      mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-      mediaRecorder.ondataavailable = e => e.data.size && chunks.push(e.data);
       mediaRecorder.onstop = () => {
-        stopTimer();
-        audioBlob = new Blob(chunks, { type: mediaRecorder.mimeType });
+        audioBlob = new Blob(chunks, { type: "audio/webm" });
+        cleanupUrl();
         audioUrl = URL.createObjectURL(audioBlob);
         playback.src = audioUrl;
-        downloadBtn.disabled = false;
+
+        submitBtn.disabled = false;
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
         resetBtn.disabled = false;
-        setStatus("Ready to download");
+
+        setStatus("Ready to submit");
         stream.getTracks().forEach(t => t.stop());
       };
+
       mediaRecorder.start();
+
       startBtn.disabled = true;
       stopBtn.disabled = false;
+      submitBtn.disabled = true;
       resetBtn.disabled = false;
+
       setStatus("Recording");
-      startTimer();
-    };
+    }catch(err){
+      alert("Microphone access failed. Allow mic permissions and try again.");
+      resetAll();
+    }
+  });
 
-    stopBtn.onclick = () => {
-      if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
+  stopBtn.addEventListener("click", () => {
+    if (mediaRecorder && mediaRecorder.state === "recording"){
+      setStatus("Stopping");
+      mediaRecorder.stop();
+    }
+  });
+
+  submitBtn.addEventListener("click", async () => {
+    if (!audioBlob) return;
+
+    try{
+      isSubmitting = true;
+      startBtn.disabled = true;
       stopBtn.disabled = true;
+      submitBtn.disabled = true;
+      resetBtn.disabled = true;
+
+      setStatus("Preparing submission");
+
+      const base64 = await blobToBase64(audioBlob);
+      const filename = makeFilename();
+
+      const payload = {
+        filename: filename,
+        mimeType: "audio/webm",
+        data: base64,
+        name: safeText(nameEl.value),
+        year: safeText(yearEl.value),
+        email: safeText(emailEl.value),
+        phone: safeText(phoneEl.value),
+        subject: safeText(subjectEl.value)
+      };
+
+      setStatus("Submitting");
+
+      await fetch(UPLOAD_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(payload)
+      });
+
+      setStatus("Submitted. Thank you.");
+      resetBtn.disabled = false;
+    }catch(err){
+      setStatus("Submit failed");
+      alert("Submit failed. " + String(err));
+      submitBtn.disabled = false;
+      resetBtn.disabled = false;
+    }finally{
+      isSubmitting = false;
       startBtn.disabled = false;
-    };
+    }
+  });
 
-    downloadBtn.onclick = () => {
-      const a = document.createElement("a");
-      a.href = audioUrl;
-      a.download = safeFilename();
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    };
-
-    resetBtn.onclick = resetAll;
-  </script>
+  resetBtn.addEventListener("click", resetAll);
+  window.addEventListener("beforeunload", cleanupUrl);
+</script>
 
 </body>
 </html>
