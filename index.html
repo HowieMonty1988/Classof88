@@ -107,6 +107,22 @@
     color: #222;
   }
 
+  .rec{
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    border: 1px solid #a33;
+    color: #a33;
+    background: #fff;
+  }
+
+  .rec.on{
+    color: #fff;
+    background: #a33;
+    border-color: #a33;
+  }
+
   .note{
     font-size: 13px;
     color: #555;
@@ -164,6 +180,7 @@
     <div class="status">
       <div>Status: <span class="muted" id="statusText">Ready</span></div>
       <div>Time: <span class="timer" id="timer">00:00</span></div>
+      <div><span class="rec" id="recBadge">RECORDING</span></div>
     </div>
 
     <audio id="playback" controls></audio>
@@ -184,6 +201,7 @@
   const resetBtn = document.getElementById("resetBtn");
   const statusText = document.getElementById("statusText");
   const timerEl = document.getElementById("timer");
+  const recBadge = document.getElementById("recBadge");
   const playback = document.getElementById("playback");
 
   const nameEl = document.getElementById("name");
@@ -198,11 +216,20 @@
   let audioUrl = null;
   let isSubmitting = false;
 
-  let timerInterval = null;
   let startTimeMs = 0;
+  let rafId = 0;
+  let timerRunning = false;
 
   function setStatus(text){
     statusText.textContent = text;
+  }
+
+  function setRecordingVisual(on){
+    if (on){
+      recBadge.classList.add("on");
+    } else {
+      recBadge.classList.remove("on");
+    }
   }
 
   function formatTime(totalSeconds){
@@ -211,25 +238,30 @@
     return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
   }
 
-  function startTimer(){
-    startTimeMs = Date.now();
-    timerEl.textContent = "00:00";
-    timerInterval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTimeMs) / 1000);
-      timerEl.textContent = formatTime(elapsed);
-    }, 250);
-  }
-
-  function stopTimer(){
-    if (timerInterval){
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-  }
-
   function resetTimer(){
     stopTimer();
     timerEl.textContent = "00:00";
+  }
+
+  function tick(){
+    if (!timerRunning) return;
+    const elapsedSeconds = Math.floor((Date.now() - startTimeMs) / 1000);
+    timerEl.textContent = formatTime(elapsedSeconds);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startTimer(){
+    startTimeMs = Date.now();
+    timerRunning = true;
+    timerEl.textContent = "00:00";
+    cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function stopTimer(){
+    timerRunning = false;
+    cancelAnimationFrame(rafId);
+    rafId = 0;
   }
 
   function cleanupUrl(){
@@ -280,6 +312,7 @@
     mediaRecorder = null;
     chunks = [];
     audioBlob = null;
+
     cleanupUrl();
     playback.src = "";
 
@@ -289,6 +322,7 @@
     resetBtn.disabled = true;
 
     setStatus("Ready");
+    setRecordingVisual(false);
     resetTimer();
   }
 
@@ -316,8 +350,9 @@
 
       mediaRecorder.onstop = () => {
         stopTimer();
-        audioBlob = new Blob(chunks, { type: "audio/webm" });
+        setRecordingVisual(false);
 
+        audioBlob = new Blob(chunks, { type: "audio/webm" });
         cleanupUrl();
         audioUrl = URL.createObjectURL(audioBlob);
         playback.src = audioUrl;
@@ -339,6 +374,7 @@
       resetBtn.disabled = false;
 
       setStatus("Recording");
+      setRecordingVisual(true);
       resetTimer();
       startTimer();
     }catch(err){
