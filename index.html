@@ -37,7 +37,7 @@
   <h1>High School Stories Recorder</h1>
 
   <p class="warn small">
-    Instructions. Enter your name and optional contact info, press Start Recording, tell your story, then press Stop and Download.
+    Instructions. Fill in the details, press Start Recording, tell your story, then press Stop and Download.
     If you want your story kept private and not used in a book, say that clearly at the start of your recording.
     Contact info is only used if clarification is needed.
   </p>
@@ -54,6 +54,12 @@
 
     <label for="phone">Phone number (optional)</label>
     <input id="phone" type="tel" placeholder="Example: 555-123-4567" autocomplete="tel" />
+
+    <label for="subject">Story subject or title</label>
+    <input id="subject" type="text" placeholder="Example: The night we got kicked out of the dance" />
+
+    <label for="summary">Brief description (1 to 2 sentences)</label>
+    <input id="summary" type="text" placeholder="Example: What happened, who was there, and why it stands out." />
 
     <div class="row">
       <button id="startBtn">Start Recording</button>
@@ -82,10 +88,13 @@
     const statusEl = document.getElementById("status");
     const timerEl = document.getElementById("timer");
     const playback = document.getElementById("playback");
+
     const nameEl = document.getElementById("name");
     const yearEl = document.getElementById("year");
     const emailEl = document.getElementById("email");
     const phoneEl = document.getElementById("phone");
+    const subjectEl = document.getElementById("subject");
+    const summaryEl = document.getElementById("summary");
 
     let mediaRecorder = null;
     let chunks = [];
@@ -121,19 +130,29 @@
       timerInterval = null;
     }
 
+    function normalizeTag(value, fallback, maxLen) {
+      const v = String(value || "").trim();
+      const base = v ? v : fallback;
+      const cleaned = base.replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "");
+      return cleaned.slice(0, maxLen);
+    }
+
     function safeFilename() {
-      const name = (nameEl.value || "Anonymous").trim().replace(/[^a-z0-9]+/gi, "_");
-      const year = (yearEl.value || "").trim().replace(/[^0-9]+/g, "");
-      const email = (emailEl.value || "").trim().replace(/[^a-z0-9]+/gi, "_");
-      const phone = (phoneEl.value || "").trim().replace(/[^0-9]+/g, "");
+      const name = normalizeTag(nameEl.value, "Anonymous", 40);
+      const year = String(yearEl.value || "").trim().replace(/[^0-9]+/g, "").slice(0, 4);
+      const email = normalizeTag(emailEl.value, "", 50);
+      const phone = String(phoneEl.value || "").trim().replace(/[^0-9]+/g, "").slice(0, 15);
+      const subject = normalizeTag(subjectEl.value, "Story", 50);
       const stamp = new Date().toISOString().replace(/[:.]/g, "").slice(0, 15);
 
-      const parts = ["HighSchoolStory", name];
+      const parts = ["HighSchoolStory", subject, name];
       if (year) parts.push(year);
       if (email) parts.push("email_" + email);
       if (phone) parts.push("phone_" + phone);
       parts.push(stamp);
-      return parts.join("_");
+
+      const ext = (audioBlob && audioBlob.type && audioBlob.type.includes("ogg")) ? "ogg" : "webm";
+      return parts.join("_") + "." + ext;
     }
 
     function cleanupUrl() {
@@ -175,6 +194,7 @@
     startBtn.addEventListener("click", async () => {
       try {
         resetAll();
+
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           alert("This browser does not support microphone recording.");
           return;
@@ -189,18 +209,25 @@
         audioBlob = null;
 
         mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-        mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
         mediaRecorder.onstop = () => {
           stopTimer();
           setStatus("Processing recording");
+
           audioBlob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
           cleanupUrl();
           audioUrl = URL.createObjectURL(audioBlob);
           playback.src = audioUrl;
+
           downloadBtn.disabled = false;
           resetBtn.disabled = false;
           startBtn.disabled = false;
           stopBtn.disabled = true;
+
           setStatus("Ready to download");
           stream.getTracks().forEach(t => t.stop());
         };
@@ -210,6 +237,7 @@
         stopBtn.disabled = false;
         downloadBtn.disabled = true;
         resetBtn.disabled = false;
+
         setStatus("Recording");
         startTimer();
       } catch (err) {
@@ -227,8 +255,9 @@
 
     downloadBtn.addEventListener("click", () => {
       if (!audioBlob) return;
-      const ext = (audioBlob.type && audioBlob.type.includes("ogg")) ? "ogg" : "webm";
-      const filename = safeFilename() + "." + ext;
+
+      const filename = safeFilename();
+
       const a = document.createElement("a");
       a.href = audioUrl;
       a.download = filename;
