@@ -1,178 +1,484 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Class of 88, Story Recorder</title>
-
-<style>
-  body{
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 22px;
-    max-width: 900px;
-    background-color: #faf6f0;
-    color: #222;
-  }
-  .wrap{ max-width: 820px; margin: 0 auto; }
-  h1{ margin: 0 0 10px; font-size: 26px; }
-  .intro{
-    background: #fff; border: 1px solid #e2d9cc; border-radius: 12px;
-    padding: 18px; margin-bottom: 18px; line-height: 1.6;
-  }
-  .card{
-    background: #fff; border: 1px solid #e2d9cc; border-radius: 12px; padding: 18px;
-  }
-  label{ display: block; font-weight: bold; margin-top: 12px; }
-  input, textarea{
-    width: 100%; padding: 10px; border-radius: 10px;
-    border: 1px solid #ccc; margin-top: 4px; font-size: 14px;
-  }
-  textarea{ resize: vertical; }
-  .row{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
-  button{
-    padding: 10px 16px; border-radius: 10px; border: 1px solid #333;
-    background: #333; color: #fff; cursor: pointer; font-size: 14px;
-  }
-  button.secondary{ background: #fff; color: #333; }
-  button:disabled{ opacity: 0.55; cursor: not-allowed; }
-  .status{
-    margin-top: 12px; font-weight: bold; display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap;
-  }
-  .muted{ font-weight: normal; color: #555; }
-  .timer{ font-variant-numeric: tabular-nums; font-weight: bold; }
-  .rec{
-    padding: 2px 8px; border-radius: 999px; font-size: 12px;
-    border: 1px solid #a33; color: #a33; background: #fff;
-  }
-  .rec.on{ background: #a33; color: #fff; }
-  .note{ font-size: 13px; color: #555; margin-top: 10px; line-height: 1.5; }
-  audio{ width: 100%; margin-top: 14px; }
-</style>
-</head>
-
-<body>
-<div class="wrap">
-
-<h1>Class of 88, Story Recorder</h1>
-
-<div class="intro">
-  <p>This page collects spoken stories from our high school years. No writing required.</p>
-  <p>Please start by saying your name and graduation year.</p>
-</div>
-
-<div class="card">
-  <label>Your name</label>
-  <input id="name" placeholder="Example: Steve Hauer">
-
-  <label>Graduation year (optional)</label>
-  <input id="year" placeholder="1988">
-
-  <label>Email (optional)</label>
-  <input id="email">
-
-  <label>Phone (optional)</label>
-  <input id="phone">
-
-  <label>Story subject</label>
-  <textarea id="subject" rows="3"></textarea>
-
-  <div class="row">
-    <button id="startBtn">Start Recording</button>
-    <button id="stopBtn" disabled>Stop</button>
-    <button id="submitBtn" class="secondary" disabled>Submit</button>
-    <button id="resetBtn" class="secondary" disabled>Reset</button>
-  </div>
-
-  <div class="status">
-    <div>Status: <span class="muted" id="statusText">Ready</span></div>
-    <div>Time: <span class="timer" id="timer">00:00</span></div>
-    <div><span class="rec" id="recBadge">RECORDING</span></div>
-  </div>
-
-  <audio id="playback" controls></audio>
-  <p class="note">Submitting sends the recording directly to the project Drive folder.</p>
-</div>
-
-</div>
-
-<script>
-const UPLOAD_URL = "https://script.google.com/macros/s/AKfycbyo5vUFD3HrCqeW9N20keNf0C3468GRL20nrGEM_3hJWAvv-1whGIwGhdCXjmQ-TsWy/exec
-
-const startBtn = document.getElementById("startBtn");
-const stopBtn = document.getElementById("stopBtn");
-const submitBtn = document.getElementById("submitBtn");
-const resetBtn = document.getElementById("resetBtn");
-const statusText = document.getElementById("statusText");
-const timerEl = document.getElementById("timer");
-const recBadge = document.getElementById("recBadge");
-const playback = document.getElementById("playback");
-
-let mediaRecorder, chunks=[], audioBlob, startTime, raf;
-
-function format(sec){
-  return String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");
-}
-function tick(){
-  timerEl.textContent = format(Math.floor((Date.now()-startTime)/1000));
-  raf = requestAnimationFrame(tick);
-}
-function resetTimer(){
-  cancelAnimationFrame(raf); timerEl.textContent="00:00";
-}
-
-startBtn.onclick = async ()=>{
-  chunks=[];
-  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-  mediaRecorder = new MediaRecorder(stream);
-  mediaRecorder.ondataavailable=e=>chunks.push(e.data);
-  mediaRecorder.onstop=()=>{
-    audioBlob=new Blob(chunks,{type:"audio/webm"});
-    playback.src=URL.createObjectURL(audioBlob);
-    submitBtn.disabled=false; resetBtn.disabled=false;
-    recBadge.classList.remove("on"); cancelAnimationFrame(raf);
-    stream.getTracks().forEach(t=>t.stop());
-  };
-  mediaRecorder.start();
-  startTime=Date.now(); resetTimer(); tick();
-  recBadge.classList.add("on");
-  startBtn.disabled=true; stopBtn.disabled=false;
-  statusText.textContent="Recording";
-};
-
-stopBtn.onclick=()=>{
-  mediaRecorder.stop();
-  startBtn.disabled=false; stopBtn.disabled=true;
-  statusText.textContent="Ready to submit";
-};
-
-submitBtn.onclick=async()=>{
-  statusText.textContent="Uploading...";
-  const reader=new FileReader();
-  reader.onloadend=async()=>{
-    const res = await fetch(UPLOAD_URL,{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({
-        filename:"Classof88_"+Date.now()+".webm",
-        mimeType:"audio/webm",
-        data:reader.result.split(",")[1],
-        name:name.value, year:year.value,
-        email:email.value, phone:phone.value, subject:subject.value
-      })
-    });
-    const json = await res.json();
-    if(json.ok){
-      statusText.textContent="Submitted successfully";
-    }else{
-      statusText.textContent="Upload failed";
-      alert(json.error || "Upload failed");
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>High School Stories Recorder</title>
+  <style>
+    :root {
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --text: #111;
+      --muted: #555;
+      --border: rgba(0, 0, 0, 0.12);
+      --btn: #111;
+      --btnText: #fff;
+      --btn2: #f2f2f2;
+      --btn2Text: #111;
+      --danger: #b00020;
+      --ok: #0b6b2a;
     }
-  };
-  reader.readAsDataURL(audioBlob);
-};
 
-resetBtn.onclick=()=>location.reload();
-</script>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+    }
+
+    body {
+      background-color: #efe7da;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+        url("nodulek.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      padding: 28px 14px;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 30px;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+    }
+
+    .hint {
+      background: rgba(255, 245, 225, 0.95);
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 0 0 14px 0;
+      line-height: 1.35;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 8px 26px rgba(0,0,0,0.18);
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin: 10px 0 6px;
+    }
+
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 12px;
+      font-size: 16px;
+      outline: none;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--btn);
+      color: var(--btnText);
+    }
+
+    button.secondary {
+      background: var(--btn2);
+      color: var(--btn2Text);
+      border: 1px solid var(--border);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.8);
+      line-height: 1.35;
+    }
+
+    .muted { color: var(--muted); }
+
+    .ok { color: var(--ok); font-weight: 700; }
+    .bad { color: var(--danger); font-weight: 700; }
+
+    .meter {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0,0,0,0.12);
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.35;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>High School Stories Recorder</h1>
+
+    <div class="hint">
+      Instructions. Enter your name, and a short subject, then press Start Recording. When finished, press Stop, then press Submit.
+      <br><br>
+      Recording time. For best results, keep recordings under 10 minutes. Use Chrome or Edge if possible. On iPhone Safari, recording can be unreliable.
+      Keep your screen awake while recording.
+    </div>
+
+    <div class="card">
+      <label for="name">Your name</label>
+      <input id="name" type="text" placeholder="Example: Steve Hauer" autocomplete="name" />
+
+      <label for="year">Graduation year (optional)</label>
+      <input id="year" type="text" placeholder="Example: 1988" inputmode="numeric" />
+
+      <label for="email">Email (optional)</label>
+      <input id="email" type="email" placeholder="Example: you@email.com" autocomplete="email" />
+
+      <label for="phone">Phone (optional)</label>
+      <input id="phone" type="tel" placeholder="Example: 3205551234" autocomplete="tel" />
+
+      <label for="subject">Story subject (required)</label>
+      <input id="subject" type="text" placeholder="Example: The bonfire night, The big game, The class trip" />
+
+      <label for="details">Brief description (optional)</label>
+      <textarea id="details" placeholder="One or two sentences about what the story is about."></textarea>
+
+      <div class="row">
+        <button id="startBtn" class="primary">Start Recording</button>
+        <button id="stopBtn" class="secondary" disabled>Stop</button>
+        <button id="submitBtn" class="primary" disabled>Submit</button>
+        <button id="resetBtn" class="secondary">Reset</button>
+      </div>
+
+      <div class="status" id="status">
+        Status: <span class="muted" id="statusText">Ready</span>
+        <div class="meter">
+          Time: <span id="timeText">00:00</span>
+        </div>
+      </div>
+
+      <audio id="player" controls></audio>
+
+      <div class="small">
+        Privacy note. If you want your story kept private and not used in a book, say that clearly at the start of your recording.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyo5vUFD3HrCqeW9N20keNf0C3468GRL20nrGEM_3hJWAvv-1whGIwGhdCXjmQ-TsWy/exec";
+
+    const el = (id) => document.getElementById(id);
+
+    const nameEl = el("name");
+    const yearEl = el("year");
+    const emailEl = el("email");
+    const phoneEl = el("phone");
+    const subjectEl = el("subject");
+    const detailsEl = el("details");
+
+    const startBtn = el("startBtn");
+    const stopBtn = el("stopBtn");
+    const submitBtn = el("submitBtn");
+    const resetBtn = el("resetBtn");
+
+    const statusText = el("statusText");
+    const timeText = el("timeText");
+    const player = el("player");
+
+    let mediaStream = null;
+    let recorder = null;
+    let chunks = [];
+    let recordedBlob = null;
+
+    let timerInterval = null;
+    let startTimeMs = 0;
+
+    function setStatus(text, kind) {
+      statusText.className = kind || "muted";
+      statusText.textContent = text;
+    }
+
+    function formatTime(totalSeconds) {
+      const mm = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+      const ss = String(totalSeconds % 60).padStart(2, "0");
+      return mm + ":" + ss;
+    }
+
+    function startTimer() {
+      stopTimer();
+      startTimeMs = Date.now();
+      timeText.textContent = "00:00";
+      timerInterval = setInterval(() => {
+        const seconds = Math.floor((Date.now() - startTimeMs) / 1000);
+        timeText.textContent = formatTime(seconds);
+      }, 250);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function hasMediaRecorderSupport() {
+      return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+    }
+
+    function pickMimeType() {
+      const candidates = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/ogg;codecs=opus",
+        "audio/ogg"
+      ];
+      for (const t of candidates) {
+        if (MediaRecorder.isTypeSupported(t)) return t;
+      }
+      return "";
+    }
+
+    async function startRecording() {
+      recordedBlob = null;
+      player.src = "";
+      chunks = [];
+
+      if (!hasMediaRecorderSupport()) {
+        setStatus("This browser cannot record audio here. Use Chrome or Edge.", "bad");
+        return;
+      }
+
+      const subject = subjectEl.value.trim();
+      if (!subject) {
+        setStatus("Please enter a story subject first.", "bad");
+        subjectEl.focus();
+        return;
+      }
+
+      try {
+        setStatus("Requesting microphone permission.", "muted");
+
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+
+        const mimeType = pickMimeType();
+        recorder = mimeType ? new MediaRecorder(mediaStream, { mimeType }) : new MediaRecorder(mediaStream);
+
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) chunks.push(e.data);
+        };
+
+        recorder.onstart = () => {
+          startBtn.disabled = true;
+          stopBtn.disabled = false;
+          submitBtn.disabled = true;
+          setStatus("Recording.", "ok");
+          startTimer();
+        };
+
+        recorder.onstop = () => {
+          stopTimer();
+          stopBtn.disabled = true;
+          startBtn.disabled = false;
+
+          recordedBlob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+          const url = URL.createObjectURL(recordedBlob);
+          player.src = url;
+
+          submitBtn.disabled = false;
+          const seconds = Math.floor((Date.now() - startTimeMs) / 1000);
+          timeText.textContent = formatTime(seconds);
+          setStatus("Recording ready to submit.", "ok");
+
+          if (mediaStream) {
+            mediaStream.getTracks().forEach(t => t.stop());
+            mediaStream = null;
+          }
+        };
+
+        recorder.onerror = (err) => {
+          stopTimer();
+          setStatus("Recorder error: " + (err && err.message ? err.message : String(err)), "bad");
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+          submitBtn.disabled = true;
+        };
+
+        recorder.start(250);
+      } catch (err) {
+        setStatus("Microphone permission blocked. Please allow mic access, then try again.", "bad");
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        submitBtn.disabled = true;
+      }
+    }
+
+    function stopRecording() {
+      if (!recorder) return;
+      try {
+        recorder.stop();
+      } catch (e) {
+        setStatus("Could not stop recorder. Refresh and try again.", "bad");
+      }
+    }
+
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const dataUrl = reader.result || "";
+          const base64 = String(dataUrl).split(",")[1] || "";
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function submitRecording() {
+      if (!recordedBlob) {
+        setStatus("No recording to submit. Record first.", "bad");
+        return;
+      }
+
+      const subject = subjectEl.value.trim();
+      if (!subject) {
+        setStatus("Please enter a story subject first.", "bad");
+        subjectEl.focus();
+        return;
+      }
+
+      submitBtn.disabled = true;
+      startBtn.disabled = true;
+      stopBtn.disabled = true;
+
+      try {
+        setStatus("Preparing upload.", "muted");
+
+        const base64 = await blobToBase64(recordedBlob);
+
+        const safeName = (nameEl.value.trim() || "Unknown").replace(/[^\w\s\-]/g, "").trim();
+        const safeSubject = subject.replace(/[^\w\s\-]/g, "").trim();
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "");
+        const filename = `ClassOf88_${safeName}_${safeSubject}_${timestamp}.webm`.replace(/\s+/g, "_");
+
+        const payload = {
+          filename: filename,
+          mimeType: recordedBlob.type || "audio/webm",
+          data: base64,
+          name: nameEl.value.trim(),
+          year: yearEl.value.trim(),
+          email: emailEl.value.trim(),
+          phone: phoneEl.value.trim(),
+          subject: subjectEl.value.trim(),
+          details: detailsEl.value.trim()
+        };
+
+        setStatus("Uploading.", "muted");
+
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const text = await res.text();
+        let json = null;
+        try { json = JSON.parse(text); } catch (e) {}
+
+        if (!res.ok) {
+          throw new Error("Upload failed. HTTP " + res.status + ". " + text);
+        }
+
+        if (json && json.ok === false) {
+          throw new Error("Upload failed. " + (json.error || "Unknown error"));
+        }
+
+        setStatus("Submitted successfully. Thank you.", "ok");
+      } catch (err) {
+        setStatus("Submit error: " + (err && err.message ? err.message : String(err)), "bad");
+        submitBtn.disabled = false;
+      } finally {
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      }
+    }
+
+    function resetAll() {
+      stopTimer();
+
+      try {
+        if (recorder && recorder.state !== "inactive") recorder.stop();
+      } catch (e) {}
+
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+        mediaStream = null;
+      }
+
+      recorder = null;
+      chunks = [];
+      recordedBlob = null;
+      player.src = "";
+
+      timeText.textContent = "00:00";
+      setStatus("Ready", "muted");
+
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      submitBtn.disabled = true;
+    }
+
+    startBtn.addEventListener("click", startRecording);
+    stopBtn.addEventListener("click", stopRecording);
+    submitBtn.addEventListener("click", submitRecording);
+    resetBtn.addEventListener("click", resetAll);
+
+    resetAll();
+  </script>
 </body>
 </html>
